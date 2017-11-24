@@ -14,7 +14,7 @@ var rawContainer
 var isDone = false
 
 container = []
-let amountOfCityView = React.createElement('h1', {id: 'amountOfCityView'}, 'Вам доступны id от 1 до ' + amountOfCity)
+let amountOfCityView = amountOfCityView = React.createElement('h1', {id: 'amountOfCityView'}, 'У вас нет еще элементов!')
 let input = React.createElement('input', {id: 'input'})
 let buttonDelElement = <button id='buttonDelElement' onClick = {delElement}>Удалить</button>
 let buttonTakeElementBack = <button id='buttonTakeElementBack' onClick = {takeElementBack}>Вернуть</button>
@@ -34,6 +34,7 @@ ReactDOM.render(
 )
 
 function zeroOutLocalStorage() {
+    amountOfCity = 0
     reactLocalStorage.setObject('json', undefined)
     json = []
 }
@@ -58,7 +59,6 @@ function saveFromServer() {
 
 function saveToLocalStorage() {
     reactLocalStorage.setObject('json', json)
-    reactLocalStorage.set('backActions', container)
     rawContainer = container.slice()
 }
 
@@ -76,23 +76,50 @@ function edit() { renderAndCheck(4) }
 
 function renderAndCheck(attr) {
     container = []
+    if(amountOfCity > 0)
+        amountOfCityView = React.createElement('h1', {id: 'amountOfCityView'}, 'Максимальный ID элемента: ' + amountOfCity)
+    else amountOfCityView = React.createElement('h1', {id: 'amountOfCityView'}, 'У вас нет еще элементов!')
     container.push(amountOfCityView, input, buttonDelElement, buttonTakeElementBack, inputCityName, inputCityOkato, buttonCreateCity,
         button0, button1, button2, button3, button4)
     if(document.getElementById('input') && attr) {
         let inputValue = document.getElementById('input').value
         if(attr == 1 && json[inputValue - 1]) {
+            if(rawContainer == undefined) rawContainer = container.slice()
             rawContainer[inputValue - 1] = json[inputValue - 1]
             json[inputValue - 1] = null
-        } else if(attr == 2 && !json[inputValue - 1] && amountOfCity >= inputValue) json[inputValue - 1] = rawContainer[inputValue - 1]
+            if(inputValue == amountOfCity) amountOfCity--
+            container = []
+            if(amountOfCity > 0)
+                amountOfCityView = React.createElement('h1', {id: 'amountOfCityView'}, 'Максимальный ID элемента: ' + amountOfCity)
+            else amountOfCityView = React.createElement('h1', {id: 'amountOfCityView'}, 'У вас нет еще элементов!')
+            container.push(amountOfCityView, input, buttonDelElement, buttonTakeElementBack, inputCityName, inputCityOkato, buttonCreateCity,
+                button0, button1, button2, button3, button4)
+        } else if(attr == 2 && !json[inputValue - 1]) {
+            json[inputValue - 1] = rawContainer[inputValue - 1]
+            amountOfCity = 0
+            for(let element of json) amountOfCity++
+            container = []
+            if(amountOfCity > 0)
+                amountOfCityView = React.createElement('h1', {id: 'amountOfCityView'}, 'Максимальный ID элемента: ' + amountOfCity)
+            else amountOfCityView = React.createElement('h1', {id: 'amountOfCityView'}, 'У вас нет еще элементов!')
+            container.push(amountOfCityView, input, buttonDelElement, buttonTakeElementBack, inputCityName, inputCityOkato, buttonCreateCity,
+                button0, button1, button2, button3, button4)
+        }
         else if(attr == 3) {
             let inputCityNameValue = document.getElementById('inputCityName').value
             let inputCityOkatoValue = document.getElementById('inputCityOkato').value
             if(inputCityNameValue && inputCityOkatoValue) {
                 amountOfCity++
                 container = []
+                if(amountOfCity > 0)
+                    amountOfCityView = React.createElement('h1', {id: 'amountOfCityView'}, 'Максимальный ID элемента: ' + amountOfCity)
+                else amountOfCityView = React.createElement('h1', {id: 'amountOfCityView'}, 'У вас нет еще элементов!')
                 container.push(amountOfCityView, input, buttonDelElement, buttonTakeElementBack, inputCityName, inputCityOkato, buttonCreateCity,
                     button0, button1, button2, button3, button4)
-                amountOfCityView = React.createElement('h1', {id: 'amountOfCityView'}, 'Вам доступны id от 1 до ' + amountOfCity)
+                ReactDOM.render(
+                    container,
+                    document.getElementById('main')
+                )
                 let tmp = Object.assign({}, json[0])
                 tmp.name = inputCityNameValue
                 tmp.okato = inputCityOkatoValue
@@ -108,6 +135,7 @@ function renderAndCheck(attr) {
             }
         }
     }
+
     var i = 0
     for(let element of json) {
         if(element) {
