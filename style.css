@@ -1,0 +1,13 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#main {
+    position: absolute;
+    left: 13%;
+    top: 5%;
+}
+
+.city {
+    border: 4px groove black
+}
