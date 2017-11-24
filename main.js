@@ -124,7 +124,7 @@ function renderAndCheck(attr) {
                 tmp.name = inputCityNameValue
                 tmp.okato = inputCityOkatoValue
                 json.push(tmp)
-            }
+            } 
         } else if(attr == 4) {
             let inputValue = document.getElementById('input').value
             let inputCityNameValue = document.getElementById('inputCityName').value
